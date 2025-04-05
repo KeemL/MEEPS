@@ -3,7 +3,7 @@ import { Box, Button, Checkbox, FormControlLabel, FormGroup, FormLabel, TextFiel
 export default function Home() {
   return (
     <>
-      <div className='w-screen h-screen flex justify-center items-center bg-linear-to-br from-cyan-500 to-blue-500'>
+      <div className='w-screen h-screen flex justify-center items-center'>
         <form className='flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg' action={async (formData) => {
           'use server'
           const firstName = formData.get('firstName');
