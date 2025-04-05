@@ -1,15 +1,20 @@
-import { Box, Button, Checkbox, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
+"use client";
+import { Autocomplete, Box, Button, FormLabel, TextField } from '@mui/material';
+import { useState } from 'react';
 
 export default function Home() {
+
+  const [checkedConditions, setCheckedConditions] = useState(['']);
+
+  
   return (
     <>
       <div className='w-screen h-screen flex justify-center items-center'>
         <form className='flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg' action={async (formData) => {
-          'use server'
+          // 'use server'
           const firstName = formData.get('firstName');
           const lastName = formData.get('lastName');
           const birthDate = formData.get('birthDate');
-          const checkedConditions = formData.getAll('condition');
 
           console.log(firstName)
           console.log(lastName)
@@ -28,12 +33,16 @@ export default function Home() {
           />
 
           <FormLabel component="legend">Relevant Conditions</FormLabel>
-          <FormGroup>
-            <FormControlLabel control={<Checkbox value="Pollen Allergy" name='condition' />} label="Pollen Allergy" />
-            <FormControlLabel control={<Checkbox value="Pregnancy" name='condition' />} label="Pregnancy" />
-            <FormControlLabel control={<Checkbox value="Cardiovascular disease" name='condition' />} label="Cardiovascular disease" />
-            <FormControlLabel control={<Checkbox value="Asthma" name='condition' />} label="Asthma" />
-          </FormGroup>
+
+          <Autocomplete 
+          multiple options={['Pollen Allergy', 'Pregnancy', 'Cardiovascular disease', 'Asthma']} 
+          onChange={(event, newValues: string[] | null) => {
+            setCheckedConditions(newValues || ['']);
+          }}
+          renderInput={(params) => {
+            return <TextField {...params} label="Asthma, Pollen allergy, etc." name='condition'   />}}  
+          />
+
           <Box className='flex justify-end'>
             <Button type='submit' className='bg-blue-500 text-white rounded-md p-2'>Submit</Button>
           </Box>
