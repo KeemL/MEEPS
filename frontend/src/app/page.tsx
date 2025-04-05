@@ -31,8 +31,8 @@ export default function Home() {
           <FormGroup>
             <FormControlLabel control={<Checkbox value="Pollen Allergy" name='condition' />} label="Pollen Allergy" />
             <FormControlLabel control={<Checkbox value="Pregnancy" name='condition' />} label="Pregnancy" />
-            <FormControlLabel control={<Checkbox name='condition' />} label="Cardiovascular disease" />
-            <FormControlLabel control={<Checkbox name='condition' />} label="Asthma" />
+            <FormControlLabel control={<Checkbox value="Cardiovascular disease" name='condition' />} label="Cardiovascular disease" />
+            <FormControlLabel control={<Checkbox value="Asthma" name='condition' />} label="Asthma" />
           </FormGroup>
           <Box className='flex justify-end'>
             <Button type='submit' className='bg-blue-500 text-white rounded-md p-2'>Submit</Button>
