@@ -1,19 +1,22 @@
 package com.example.MEEPS.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
-public class HealthServiceImplementation implements HealthService {
+public class healthServiceImplementation implements healthService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
-    private String meersenKey = "https://api.meersens.com/environment/public";
-
-    public HealthServiceImplementation(RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public healthServiceImplementation(RestTemplate restTemplate, ObjectMapper objectMapper) {
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
     }
@@ -24,33 +27,41 @@ public class HealthServiceImplementation implements HealthService {
         return "Patient is good to go.";
     }
 
-    public String translateCoordinates() {
-        Map<String, Map<String, Integer>> location = createMap();
-        List<Integer> coords = new ArrayList<>();
-        System.out.println("location"+ location);
+    /*
+    Determines the user's risk factor's based on their health history.
+    */
+    @Override
+    public String determineRiskFactors(String userInput) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Authorization", "Bearer " + "replace" /* API KEY GOES HERE */);
+        
+        Map<String, Object> requestBody = new HashMap<>();
+        requestBody.put("input", userInput);
+        requestBody.put("model", "gpt-4o");
+        requestBody.put("temperature", 0.5);
+        requestBody.put("instructions", """
+            Given a set of the user's medical data classify their risk factors into the following categories, and include your response as a json.
+            
+            Potential Risk Factors:
+            - Pollen
+            - UV Index
+            - Air Pollution
+            - Heat
 
-
-//        Map<String, Object> test = geocodeDTO.extractCoordinates(geometry);
-        return "successful";
-    }
-
-
-    public static Map<String, Map<String, Integer>> createMap() {
-        Map<String, Integer> hm = new HashMap<>();
-        hm.put("lat", 37);
-        hm.put("lng", -122);
-        System.out.println(hm);
-
-        Map<String, Map<String, Integer>> location = new HashMap<>();
-        location.put("location", hm);
-
-        Map<String, Map<String, Map<String, Integer>>> geometry = new HashMap<>();
-
-        geometry.put("geometry", location);
-
-
-        System.out.println(geometry);
-        return location;
-
+            Example Respones:
+            {
+                "risk_factors": [ 
+                    "Pollen", "Noise Pollution"
+                ]
+            }
+        """);
+                
+        HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+        
+        String url = "https://api.openai.com/v1/responses";
+        ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+        
+        return response.getBody();
     }
 }

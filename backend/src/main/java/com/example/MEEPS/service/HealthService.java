@@ -1,19 +1,8 @@
 package com.example.MEEPS.service;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static com.example.MEEPS.service.HealthServiceImplementation.createMap;
+import org.springframework.http.ResponseEntity;
 
 
-public interface HealthService {
+public interface healthService {
     public String checkPatient();
-
-    public static String translateCoordinates() {
-        Map<String, Map<String, Integer>> location = createMap();
-        List<Integer> coords = new ArrayList<>();
-        System.out.println("location"+ location);
-        return "success";
-    }
+    public String determineRiskFactors(String userInput);
 }
