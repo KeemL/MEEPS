@@ -1,19 +1,22 @@
 "use client";
 
-import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, FormLabel, TextField } from '@mui/material';
 import { useState } from "react";
 import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
 import { unpopulatedGeojson } from './map/data';
 import { useRouter } from "next/navigation";
-import LocationAutocomplete from '@/components/LocationAutocomplete';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const { setPoints } = useHeatMap();
   const router = useRouter();
+  const [checkedConditions, setCheckedConditions] = useState(['']);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -31,7 +34,7 @@ export default function Home() {
       lastName: formData.get('lastName'),
       birthDate: formData.get('birthDate'),
       address: formData.get('address'),
-      conditions: formData.getAll('condition'),
+      conditions: checkedConditions,
       geojson: unpopulatedGeojson
     }
 
@@ -80,13 +83,16 @@ export default function Home() {
          * Replaced in the future with Autocomplete. Ensure data formatted correctly here.
          */}
         <FormLabel component="legend">Relevant Conditions</FormLabel>
-        <FormGroup>
-          {/* Adjust these values to match allowed RiskFactor types if needed */}
-          <FormControlLabel control={<Checkbox value="Pollen" name='condition' />} label="Pollen" />
-          <FormControlLabel control={<Checkbox value="Air Pollution" name='condition' />} label="Air Pollution" />
-          <FormControlLabel control={<Checkbox value="Noise Pollution" name='condition' />} label="Noise Pollution" />
-          <FormControlLabel control={<Checkbox value="Heat" name='condition' />} label="Heat" />
-        </FormGroup>
+        <Autocomplete
+          multiple options={['Pollen Allergy', 'Pregnancy', 'Cardiovascular disease', 'Asthma']}
+          onChange={(event, newValues: string[] | null) => {
+            setCheckedConditions(newValues || ['']);
+          }}
+          renderInput={(params) => {
+            return <TextField {...params} label="Asthma, Pollen allergy, etc." name='condition' />
+          }}
+        />
+
         <Box className='flex justify-end'>
           <Button
             type='submit'
