@@ -3,7 +3,7 @@
 import { useEffect, useMemo } from 'react';
 import { useMap, useMapsLibrary } from '@vis.gl/react-google-maps';
 import type { FeatureCollection, Point, GeoJsonProperties } from 'geojson';
-import { useFilterSet } from '@/app/map/page';
+import { useFilterSet } from '@/components/FilterSetProvider';
 
 type HeatmapProps = {
   geojson: FeatureCollection<Point, GeoJsonProperties>;
@@ -16,17 +16,18 @@ const Heatmap = ({ geojson, radius, opacity }: HeatmapProps) => {
   const visualization = useMapsLibrary('visualization');
   const { filterSet } = useFilterSet();
 
-  // Create the heatmap layer when visualization is ready
   const heatmap = useMemo(() => {
     if (!visualization) return null;
 
     return new google.maps.visualization.HeatmapLayer({
       radius: radius,
-      opacity: opacity
+      opacity: opacity,
     });
   }, [visualization, radius, opacity]);
 
   const filteredFeatures = useMemo(() => {
+    if (filterSet.size === 0) return geojson.features;
+
     return geojson.features.filter((point: any) => {
       return point.risk_factors && point.risk_factors.some((rf: string) => filterSet.has(rf));
     });
@@ -39,7 +40,7 @@ const Heatmap = ({ geojson, radius, opacity }: HeatmapProps) => {
       const [lng, lat] = point.geometry.coordinates;
       return {
         location: new google.maps.LatLng(lat, lng),
-        weight: point.properties?.mag || 1,
+        weight: 4, // default weight if undefined
       };
     });
 
