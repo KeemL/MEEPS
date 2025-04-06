@@ -1,16 +1,14 @@
 "use client";
 
 
-import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
 import { useState, useEffect } from "react";
-
-// import { Autocomplete, Box, Button, CircularProgress, FormLabel, Snackbar, TextField } from '@mui/material';
-<!-- import { useState } from "react"; -->
+import { Autocomplete, Box, Button, CircularProgress, FormLabel, Snackbar, TextField } from '@mui/material';
 
 import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
 import { unpopulatedGeojson } from './map/data';
 import { useRouter } from "next/navigation";
+import { useUserData } from "@/components/UserDataProvider";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -22,6 +20,7 @@ export default function Home() {
   const { points, setPoints } = useHeatMap();
   const router = useRouter();
   const [checkedConditions, setCheckedConditions] = useState(['']);
+  const { setPatientData } = useUserData();
 
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,17 +38,16 @@ export default function Home() {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
       birthDate: formData.get('birthDate'),
-      // address: formData.get('address'),
+      address: formData.get('address'),
       conditions: checkedConditions,
       geojson: unpopulatedGeojson
-    }    
+    } 
 
     if (data.firstName === "" || data.lastName === "" || data.birthDate === "") {
       setError("Please fill in all fields.");
       setIsLoading(false);
       return;
     }
-
 
     const birthDate = new Date(data.birthDate as string);
 
@@ -59,13 +57,13 @@ export default function Home() {
       return;
     }
 
-
     try {
       const response = await axios.post("http://localhost:8080/submit", data)
 
       // Data received from the Spring API
       // If not implemented we can use some default values.
       setPoints(response.data.geojson);
+      setPatientData(data);
       router.push("/map");
     } catch (error) {
       console.error("Error submitting data:", error)
@@ -108,10 +106,9 @@ export default function Home() {
         />
 
         {/* Remove Address in favor of map search if time permits */}
-        {/* <TextField
+        <TextField
           name='address'
-          label="Address"
-        /> */}
+          label="Address"/>
 
         {/*
          * Replaced in the future with Autocomplete. Ensure data formatted correctly here.

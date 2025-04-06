@@ -54,6 +54,10 @@ public class Patient {
 
     public Patient() {}
 
+    public JsonNode getGeojson() {
+        return geojson;
+    }
+
     @Override
     public String toString() {
         return "Patient{" +
@@ -66,8 +70,6 @@ public class Patient {
                 ", geojson=" + geojson +
                 '}';
     }
-
-}
 
     public String getAddress() {
         return address;
@@ -90,6 +92,4 @@ public class Patient {
 //        return String.format("New Patient: %s %s, %s, coordinates: %s, healthConditions: %s", firstname, lastname, birthdate, coordinates, healthConditions);
 //    }
 
-
 }
-

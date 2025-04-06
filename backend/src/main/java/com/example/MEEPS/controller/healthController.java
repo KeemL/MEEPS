@@ -32,6 +32,7 @@ public class healthController {
         this.geocodingService = geocodingService;
     }
 
+    /*
     @PostMapping("/submit")
     public ResponseEntity<String> checkPatient(@RequestBody Patient patient) {
 //      RequestBody maps the patient form submission into a Patient class, which I print out
@@ -52,6 +53,7 @@ public class healthController {
 
         return ResponseEntity.ok(patientData);
     }
+    */
 
     @GetMapping("/")
     public ResponseEntity<String> welcomePatient() {
