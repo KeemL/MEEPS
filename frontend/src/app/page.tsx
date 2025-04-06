@@ -1,7 +1,7 @@
 "use client";
 
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
 import { unpopulatedGeojson } from './map/data';
@@ -11,7 +11,7 @@ const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
-  const { setPoints } = useHeatMap();
+  const { points, setPoints } = useHeatMap();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -36,11 +36,10 @@ export default function Home() {
 
     try {
       const response = await axios.post("http://localhost:8080/submit", data)
-      console.log(data);
 
       // Data received from the Spring API
       // If not implemented we can use some default values.
-      setPoints(response.data.geojson || data.geojson);
+      setPoints(response.data.geojson);
       router.push("/map");
     } catch (error) {
       console.error("Error submitting data:", error)
