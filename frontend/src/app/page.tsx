@@ -34,15 +34,12 @@ export default function Home() {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
       birthDate: formData.get('birthDate'),
-      address: formData.get('address'),
+      // address: formData.get('address'),
       conditions: checkedConditions,
       geojson: unpopulatedGeojson
-    }
+    }    
 
-    // .toISOString()
-    
-
-    if (data.firstName === "" || data.lastName === "" || data.birthDate === "" || data.address === "") {
+    if (data.firstName === "" || data.lastName === "" || data.birthDate === "") {
       setError("Please fill in all fields.");
       setIsLoading(false);
       return;
@@ -106,10 +103,11 @@ export default function Home() {
           type="date"
         />
 
-        <TextField
+        {/* Remove Address in favor of map search if time permits */}
+        {/* <TextField
           name='address'
           label="Address"
-        />
+        /> */}
 
         {/*
          * Replaced in the future with Autocomplete. Ensure data formatted correctly here.
