@@ -26,6 +26,11 @@ public class healthController {
     @GetMapping("/submit")
     public ResponseEntity<String> checkPatient() {
 
+        /*
+        see frontend/src/app/page.tsx for expected response.
+        */
+
         return ResponseEntity.ok("UserInput");
     }
+
 }

@@ -4,4 +4,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface healthService {
     public String checkPatient();
+    public String determineRiskFactors(String userInput);
 }
