@@ -1,16 +1,23 @@
 package com.example.MEEPS.controller;
 
 import com.example.MEEPS.entity.Patient;
+import com.example.MEEPS.service.GeocodingService;
 import com.example.MEEPS.service.HealthService;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;  // Added import
 import java.util.List;       // Added import
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+//import com.example.MEEPS.service.healthService;
+
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -18,9 +25,32 @@ public class healthController {
 
     private final HealthService healthService;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private final GeocodingService geocodingService;
 
-    public healthController(HealthService healthService) {
+    public healthController(HealthService healthService, GeocodingService geocodingService) {
         this.healthService = healthService;
+        this.geocodingService = geocodingService;
+    }
+
+    @PostMapping("/submit")
+    public ResponseEntity<String> checkPatient(@RequestBody Patient patient) {
+//      RequestBody maps the patient form submission into a Patient class, which I print out
+        String patientData = patient.toString();
+
+        System.out.println("patient:" + patient);
+
+        List<Double> coordinates = geocodingService.geocode(patient.getAddress());
+        if (!coordinates.isEmpty()) {
+            patient.setCoordinates(coordinates);
+            System.out.println("coordinates are" + patient.getCoordinates().toString());
+            String patientData2 = patient.toString();
+
+            System.out.println("patientData:" + patientData2);
+        } else {
+            System.out.println("Could not fetch coordinates for address: " + patient.getAddress());
+        }
+
+        return ResponseEntity.ok(patientData);
     }
 
     @GetMapping("/")
@@ -80,6 +110,7 @@ public class healthController {
     @PostMapping("/submit")
     public ResponseEntity<JsonNode> checkPatient(@RequestBody Patient patient) {
         System.out.println("Received patient: " + patient);
+
 
         // Get the geojson object from the patient
         JsonNode geojson = patient.getGeojson();

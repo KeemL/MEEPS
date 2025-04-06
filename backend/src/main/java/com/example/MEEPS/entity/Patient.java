@@ -30,8 +30,13 @@ public class Patient {
     String address;
 
     @ElementCollection
+    List<Double> coordinates;
+
+
+    @ElementCollection
     @JsonProperty("conditions")
     List<String> conditions;
+
 
     @JsonProperty("geojson")
     @Transient   // Optional: use @Transient if you do not wish to persist geojson in the database.
@@ -61,4 +66,30 @@ public class Patient {
                 ", geojson=" + geojson +
                 '}';
     }
+
 }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<Double> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
+    }
+
+//    @Override
+//    public String toString() {
+//        return String.format("New Patient: %s %s, %s, coordinates: %s, healthConditions: %s", firstname, lastname, birthdate, coordinates, healthConditions);
+//    }
+
+
+}
+

@@ -1,7 +1,12 @@
 "use client";
 
+
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
 import { useState, useEffect } from "react";
+
+// import { Autocomplete, Box, Button, CircularProgress, FormLabel, Snackbar, TextField } from '@mui/material';
+<!-- import { useState } from "react"; -->
+
 import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
 import { unpopulatedGeojson } from './map/data';
@@ -10,9 +15,14 @@ import { useRouter } from "next/navigation";
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function Home() {
+
+  const [error, setError] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const { points, setPoints } = useHeatMap();
   const router = useRouter();
+  const [checkedConditions, setCheckedConditions] = useState(['']);
+
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,10 +39,26 @@ export default function Home() {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
       birthDate: formData.get('birthDate'),
-      address: formData.get('address'),
-      conditions: formData.getAll('condition'),
+      // address: formData.get('address'),
+      conditions: checkedConditions,
       geojson: unpopulatedGeojson
+    }    
+
+    if (data.firstName === "" || data.lastName === "" || data.birthDate === "") {
+      setError("Please fill in all fields.");
+      setIsLoading(false);
+      return;
     }
+
+
+    const birthDate = new Date(data.birthDate as string);
+
+    if (birthDate > new Date() || birthDate < new Date("1900-01-01")) {
+      setError("Invalid birth date.");
+      setIsLoading(false);
+      return;
+    }
+
 
     try {
       const response = await axios.post("http://localhost:8080/submit", data)
@@ -44,6 +70,9 @@ export default function Home() {
     } catch (error) {
       console.error("Error submitting data:", error)
       // Optionally show a user-friendly error message here
+
+      setError("Error submitting data. Please try again.");
+
     } finally {
       setIsLoading(false)
     }
@@ -51,8 +80,17 @@ export default function Home() {
 
   return (
     <div className='w-screen h-screen flex justify-center items-center'>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg'>
+      <form onSubmit={handleSubmit} className='fade-in flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg' id='patient-form'>
         <h1 className='text-2xl font-bold'>Patient Information</h1>
+
+        <Snackbar
+          anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } }
+          open={ error !== ""}
+          autoHideDuration={3000}
+          onClose={ () => setError("") }
+          message={error}
+          action={ <Button onClick={ () => setError("") } color="inherit">Close</Button> }
+        />
 
         <TextField 
           name='firstName' 
@@ -69,22 +107,26 @@ export default function Home() {
           type="date"
         />
 
-        <TextField
+        {/* Remove Address in favor of map search if time permits */}
+        {/* <TextField
           name='address'
           label="Address"
-        />
+        /> */}
 
         {/*
          * Replaced in the future with Autocomplete. Ensure data formatted correctly here.
          */}
         <FormLabel component="legend">Relevant Conditions</FormLabel>
-        <FormGroup>
-          {/* Adjust these values to match allowed RiskFactor types if needed */}
-          <FormControlLabel control={<Checkbox value="Pollen" name='condition' />} label="Pollen" />
-          <FormControlLabel control={<Checkbox value="Air Pollution" name='condition' />} label="Air Pollution" />
-          <FormControlLabel control={<Checkbox value="Noise Pollution" name='condition' />} label="Noise Pollution" />
-          <FormControlLabel control={<Checkbox value="Heat" name='condition' />} label="Heat" />
-        </FormGroup>
+        <Autocomplete
+          multiple options={['Pollen Allergy', 'Pregnancy', 'Cardiovascular disease', 'Asthma']}
+          onChange={(event, newValues: string[] | null) => {
+            setCheckedConditions(newValues || ['']);
+          }}
+          renderInput={(params) => {
+            return <TextField {...params} label="Asthma, Pollen allergy, etc." name='condition' />
+          }}
+        />
+
         <Box className='flex justify-end'>
           <Button
             type='submit'
