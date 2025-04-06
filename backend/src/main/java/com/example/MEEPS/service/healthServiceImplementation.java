@@ -53,7 +53,7 @@ public class healthServiceImplementation implements HealthService {
             - Air Pollution
             - Heat
 
-            Example Respones:
+            Example Responses:
             {
                 "risk_factors": [ 
                     "Pollen", "Noise Pollution"

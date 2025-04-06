@@ -12,9 +12,7 @@ public class geocodeDTO {
         this.results = results;
     }
 
-    public geocodeDTO() {
-        super();
-    }
+    public geocodeDTO() {}
 
     public static Map<String, Object> extractCoordinates(ArrayList<Map<String, Object>> results) {
         // Obtaining each Map

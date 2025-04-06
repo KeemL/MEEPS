@@ -16,24 +16,26 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
+
     @JsonProperty("firstName")
     String firstName;
     @JsonProperty("lastName")
     String lastName;
     @JsonProperty("birthDate")
     String birthDate;
+
     @JsonProperty("address")
     String address;
 
 
     @ElementCollection
-    List<Integer> coordinates;
+    List<Double> coordinates;
 
     @ElementCollection
     @JsonProperty("conditions")
     List<String> conditions;
 
-    public Patient(String firstName, String lastName, String birthDate, List<Integer> coordinates,
+    public Patient(String firstName, String lastName, String birthDate, List<Double> coordinates,
                    List<String> conditions) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -54,6 +56,22 @@ public class Patient {
                 ", coordinates=" + coordinates +
                 ", conditions=" + conditions +
                 '}';
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public List<Double> getCoordinates() {
+        return coordinates;
+    }
+
+    public void setCoordinates(List<Double> coordinates) {
+        this.coordinates = coordinates;
     }
 
 //    @Override
