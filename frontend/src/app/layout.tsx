@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { HeatMapProvider } from "@/components/HeatMapProvider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -28,7 +29,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-linear-to-br from-cyan-500 to-blue-500 h-screen`}
       >
-        {children}
+        <HeatMapProvider>
+          {children}
+        </HeatMapProvider>
       </body>
     </html>
   );

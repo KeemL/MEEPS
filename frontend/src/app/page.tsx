@@ -1,36 +1,52 @@
-"use client"
+"use client";
 
 import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
 import { useState } from "react";
 import axios from 'axios';
+import { useHeatMap } from '@/components/HeatMapProvider';
+import { unpopulatedGeojson } from './map/data';
+import { useRouter } from "next/navigation";
+
+const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
+  const { setPoints } = useHeatMap();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setIsLoading(true);
     const formData = new FormData(e.target as HTMLFormElement);
+
+    // Make sure the new autocomplete component properly populates conditions.
+    // data should contain the geojson with the field "risk_factor"
+    // For each feature, the backend assigns a list to risk_factor which takes one or more of the following values:
+    // Pollen, Air Pollution, UV Index
+    // 
+    // If we have extra time: Add a weight field based on indices provided by 3rd party api.
     const data = {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
       birthDate: formData.get('birthDate'),
-      conditions: formData.getAll('condition')
-    };
-    console.log(data);
-    
+      address: formData.get('address'),
+      conditions: formData.getAll('condition'),
+      geojson: unpopulatedGeojson
+    }
+
     try {
-      // Finish URL in near future
-      const response = await axios.post('/submit', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      });
-      console.log("Response:", response.data);
+      const response = await axios.post("http://localhost:8080/submit", data)
+      console.log(data);
+
+      // Data received from the Spring API
+      // If not implemented we can use some default values.
+      setPoints(response.data.geojson || data.geojson);
+      router.push("/map");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      console.error("Error submitting data:", error)
+      // Optionally show a user-friendly error message here
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
   };
 
@@ -54,12 +70,21 @@ export default function Home() {
           type="date"
         />
 
+        <TextField
+          name='address'
+          label="Address"
+        />
+
+        {/*
+         * Replaced in the future with Autocomplete. Ensure data formatted correctly here.
+         */}
         <FormLabel component="legend">Relevant Conditions</FormLabel>
         <FormGroup>
-          <FormControlLabel control={<Checkbox value="Pollen Allergy" name='condition' />} label="Pollen Allergy" />
-          <FormControlLabel control={<Checkbox value="Pregnancy" name='condition' />} label="Pregnancy" />
-          <FormControlLabel control={<Checkbox value="Cardiovascular disease" name='condition' />} label="Cardiovascular disease" />
-          <FormControlLabel control={<Checkbox value="Asthma" name='condition' />} label="Asthma" />
+          {/* Adjust these values to match allowed RiskFactor types if needed */}
+          <FormControlLabel control={<Checkbox value="Pollen" name='condition' />} label="Pollen" />
+          <FormControlLabel control={<Checkbox value="Air Pollution" name='condition' />} label="Air Pollution" />
+          <FormControlLabel control={<Checkbox value="Noise Pollution" name='condition' />} label="Noise Pollution" />
+          <FormControlLabel control={<Checkbox value="Heat" name='condition' />} label="Heat" />
         </FormGroup>
         <Box className='flex justify-end'>
           <Button
