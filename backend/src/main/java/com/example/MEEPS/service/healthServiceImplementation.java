@@ -43,11 +43,11 @@ public class healthServiceImplementation implements HealthService {
         headers.set("Authorization", "Bearer " + apiKey);
 
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("input", userInput);
         requestBody.put("model", "gpt-4o");
+        requestBody.put("input", userInput);
         requestBody.put("temperature", 0.5);
         requestBody.put("instructions", """
-            Given a set of the user's medical data classify their risk factors into the following categories, and include your response as a json.
+            Given a set of the user's medical data, classify their risk factors into the following categories, and include your response as a json.
             
             Potential Risk Factors:
             - Pollen
@@ -55,21 +55,37 @@ public class healthServiceImplementation implements HealthService {
             - Air Pollution
             - Heat
 
-            Example Responses:
+            Example Response:
             {
                 "risk_factors": [ 
-                    "Pollen", "Noise Pollution"
+                    "Pollen", "Air Pollution"
                 ]
             }
         """);
-                
+
         HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
-        
-        //        String url = "https://api.openai.com/v1/responses";
-        String url = "https://api.openai.com/v1/chat/completions";
+        // Use the endpoint as shown in your example
+        String url = "https://api.openai.com/v1/responses";
         ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
-        
-        return response.getBody();
+
+        try {
+            JsonNode root = objectMapper.readTree(response.getBody());
+            JsonNode outputArray = root.path("output");
+            if (outputArray.isArray() && outputArray.size() > 0) {
+                JsonNode firstOutput = outputArray.get(0);
+                JsonNode contentArray = firstOutput.path("content");
+                if (contentArray.isArray() && contentArray.size() > 0) {
+                    String text = contentArray.get(0).path("text").asText();
+                    JsonNode parsedContent = objectMapper.readTree(text);
+                    System.out.println("JSON: " + parsedContent.toString());
+                    return objectMapper.writeValueAsString(parsedContent);
+                }
+            }
+            return "{\"risk_factors\": []}";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "{\"risk_factors\": []}";
+        }
     }
 
     @Override

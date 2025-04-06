@@ -8,6 +8,7 @@ type FilterSetContextType = {
 const FilterSetContext = createContext<FilterSetContextType | undefined>(undefined);
 
 export const FilterSetProvider: FC<{ children: ReactNode }> = ({ children }) => {
+
   const [filterSet, setFilterSet] = useState<Set<string>>(new Set(["Pollen"]));
   return (
     <FilterSetContext.Provider value={{ filterSet, setFilterSet }}>

@@ -16,8 +16,6 @@ import java.util.List;       // Added import
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-//import com.example.MEEPS.service.healthService;
-
 
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
@@ -58,6 +56,12 @@ public class healthController {
     @GetMapping("/")
     public ResponseEntity<String> welcomePatient() {
         return ResponseEntity.ok("welcome Patient");
+    }
+
+    @GetMapping("/filters")
+    public ResponseEntity<String> getFilters(@RequestParam String conditions) {
+        String response = healthService.determineRiskFactors(conditions);
+        return ResponseEntity.ok(response);
     }
 
     /**

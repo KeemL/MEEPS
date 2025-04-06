@@ -9,6 +9,7 @@ export interface PatientData {
   birthDate: string;
   address: string;
   conditions: string[];
+  risk_factors: string[];
   geojson: any; // Replace 'any' with a more specific type if available (e.g., FeatureCollection from 'geojson')
 }
 

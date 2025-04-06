@@ -14,7 +14,7 @@ type HeatmapProps = {
 const Heatmap = ({ geojson, radius, opacity }: HeatmapProps) => {
   const map = useMap();
   const visualization = useMapsLibrary('visualization');
-  const { filterSet } = useFilterSet();
+  const { filterSet, setFilterSet } = useFilterSet();
 
   const heatmap = useMemo(() => {
     if (!visualization) return null;

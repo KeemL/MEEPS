@@ -4,10 +4,9 @@ import { useFilterSet } from "./FilterSetProvider";
 
 const riskExplanations: Record<string, string> = {
   Pollen: "Pollen can trigger seasonal allergies and respiratory issues.",
-  "Air Pollution":
-    "Air pollution contains harmful substances that can affect respiratory and cardiovascular health.",
-  "Noise Pollution":
-    "Noise pollution can lead to stress, hearing issues, and disrupted sleep.",
+  "Air Pollution": "Air pollution contains harmful substances that can affect respiratory and cardiovascular health.",
+  "UV Index": "The UV Index measures the strength of ultraviolet radiation. High levels increase the risk of skin damage and sunburn.",
+  Heat: "High temperatures can lead to heat-related illnesses such as heat stroke, dehydration, and fatigue."
 };
 
 const InfoToolbar: FC = () => {
