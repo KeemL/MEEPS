@@ -1,22 +1,23 @@
 package com.example.MEEPS.controller;
 
 import com.example.MEEPS.entity.Patient;
-import org.apache.coyote.Response;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.MEEPS.service.HealthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import com.example.MEEPS.service.healthService;
+//import com.example.MEEPS.service.healthService;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class healthController {
 
-    private final healthService healthService;
+    private final HealthService healthService;
 
-    public healthController(healthService healthService) {
+    public healthController(HealthService healthService) {
         this.healthService = healthService;
     }
 
@@ -24,8 +25,6 @@ public class healthController {
     public ResponseEntity<String> welcomePatient() {
         return ResponseEntity.ok("welcome Patient");
     }
-
-
     /**
      * Endpoint for processing patient data submitted from the frontend.
      *
@@ -92,6 +91,7 @@ public class healthController {
 //      RequestBody maps the patient form submission into a Patient class, which I print out
         String patientData = patient.toString();
         System.out.println("patientData:" + patientData);
+        System.out.println("patient:" + patient);
         return ResponseEntity.ok(patientData);
     }
 

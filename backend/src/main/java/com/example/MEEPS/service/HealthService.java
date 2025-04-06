@@ -1,8 +1,7 @@
 package com.example.MEEPS.service;
-import org.springframework.http.ResponseEntity;
 
 
-public interface healthService {
+public interface HealthService {
     public String checkPatient();
     public String determineRiskFactors(String userInput);
 }

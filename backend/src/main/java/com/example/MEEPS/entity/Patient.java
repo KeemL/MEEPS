@@ -1,8 +1,8 @@
 package com.example.MEEPS.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,30 +16,44 @@ public class Patient {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     Long id;
-    String firstname;
+    @JsonProperty("firstName")
+    String firstName;
+    @JsonProperty("lastName")
+    String lastName;
+    @JsonProperty("birthDate")
+    String birthDate;
+    @JsonProperty("address")
+    String address;
 
-    String lastname;
 
-    String birthdate;
-
-    @Getter @Setter
     @ElementCollection
     List<Integer> coordinates;
-    @Getter @Setter
-    @ElementCollection
-    List<String> healthConditions;
 
-    public Patient(String firstname, String lastname, String birthdate, List<Integer> coordinates,
-                   List<String> healthConditions) {
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.birthdate = birthdate;
+    @ElementCollection
+    @JsonProperty("conditions")
+    List<String> conditions;
+
+    public Patient(String firstName, String lastName, String birthDate, List<Integer> coordinates,
+                   List<String> conditions) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
         this.coordinates = coordinates;
-        this.healthConditions = healthConditions;
+        this.conditions = conditions;
     }
 
-    public Patient() {
-        super();
+    public Patient() {}
+
+    @Override
+    public String toString() {
+        return "Patient{" +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", birthdate=" + birthDate +
+                ", address='" + address + '\'' +
+                ", coordinates=" + coordinates +
+                ", conditions=" + conditions +
+                '}';
     }
 
 //    @Override
