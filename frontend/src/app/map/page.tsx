@@ -8,6 +8,8 @@ import InfoToolbar from "@/components/InfoToolbar";
 import { FilterSetProvider } from "@/components/FilterSetProvider";
 import { useHeatMap } from "@/components/HeatMapProvider";
 import { unpopulatedGeojson } from "./data";
+import { Box } from "@mui/material";
+import LocationAutocomplete from "@/components/LocationAutocomplete";
   
 const PageContent: FC = () => {
   const { points } = useHeatMap();
@@ -31,7 +33,11 @@ const PageContent: FC = () => {
         cameraControl={true}
       />
       <MapControl position={ControlPosition.TOP_LEFT}>
-        <FilterAutocomplete />
+        <Box className="p-2 m-2 flex flex-row gap-4 bg-white rounded-2xl">
+          <LocationAutocomplete className="bg-white w-xl" />
+          <FilterAutocomplete />
+
+        </Box>
       </MapControl>
       <Heatmap geojson={unpopulatedGeojson} radius={30} opacity={0.5} />
       <InfoToolbar />

@@ -8,7 +8,7 @@ import axios from 'axios';
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
 
-export default function LocationAutocomplete() {
+export default function LocationAutocomplete( {className}: {className?: string}) {
     const [options, setOptions] = useState<string[]>([]);
     const [inputValue, setInputValue] = useState('');
 
@@ -20,6 +20,7 @@ export default function LocationAutocomplete() {
         const response = await axios.get(`https://maps.googleapis.com/maps/api/place/autocomplete/json?input=${query}&key=${API_KEY}`)
         
         const data = await response.data;
+        
         if (data.predictions) {
             setOptions(data.predictions.map((prediction: any) => prediction.description));
         }
@@ -32,11 +33,12 @@ export default function LocationAutocomplete() {
 
     return (
         <Autocomplete
+            className={className}
             freeSolo
             options={options}
             inputValue={inputValue}
             onInputChange={handleInputChange}
-            renderInput={(params) => <TextField {...params} label="Search location" variant="outlined" />}
+            renderInput={(params) => <TextField {...params} label="Search location" onInput={ () => console.log(params.inputProps.value) } variant="outlined" />}
         />
     );
 }
