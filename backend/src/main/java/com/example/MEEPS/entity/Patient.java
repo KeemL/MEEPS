@@ -1,8 +1,8 @@
 package com.example.MEEPS.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
-
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -19,29 +19,37 @@ public class Patient {
 
     @JsonProperty("firstName")
     String firstName;
+
     @JsonProperty("lastName")
     String lastName;
+
     @JsonProperty("birthDate")
     String birthDate;
 
     @JsonProperty("address")
     String address;
 
-
     @ElementCollection
     List<Double> coordinates;
+
 
     @ElementCollection
     @JsonProperty("conditions")
     List<String> conditions;
 
-    public Patient(String firstName, String lastName, String birthDate, List<Double> coordinates,
-                   List<String> conditions) {
+
+    @JsonProperty("geojson")
+    @Transient   // Optional: use @Transient if you do not wish to persist geojson in the database.
+    JsonNode geojson;
+
+    public Patient(String firstName, String lastName, String birthDate, String address, 
+                   List<String> conditions, JsonNode geojson) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
-        this.coordinates = coordinates;
+        this.address = address;
         this.conditions = conditions;
+        this.geojson = geojson;
     }
 
     public Patient() {}
@@ -49,14 +57,17 @@ public class Patient {
     @Override
     public String toString() {
         return "Patient{" +
+                "id=" + id +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", birthdate=" + birthDate +
+                ", birthDate='" + birthDate + '\'' +
                 ", address='" + address + '\'' +
-                ", coordinates=" + coordinates +
                 ", conditions=" + conditions +
+                ", geojson=" + geojson +
                 '}';
     }
+
+}
 
     public String getAddress() {
         return address;
@@ -81,3 +92,4 @@ public class Patient {
 
 
 }
+

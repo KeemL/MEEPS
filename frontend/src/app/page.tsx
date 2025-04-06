@@ -1,7 +1,12 @@
 "use client";
 
-import { Autocomplete, Box, Button, CircularProgress, FormLabel, Snackbar, TextField } from '@mui/material';
-import { useState } from "react";
+
+import { Box, Button, Checkbox, CircularProgress, FormControlLabel, FormGroup, FormLabel, TextField } from '@mui/material';
+import { useState, useEffect } from "react";
+
+// import { Autocomplete, Box, Button, CircularProgress, FormLabel, Snackbar, TextField } from '@mui/material';
+<!-- import { useState } from "react"; -->
+
 import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
 import { unpopulatedGeojson } from './map/data';
@@ -14,7 +19,7 @@ export default function Home() {
   const [error, setError] = useState("");
 
   const [isLoading, setIsLoading] = useState(false);
-  const { setPoints } = useHeatMap();
+  const { points, setPoints } = useHeatMap();
   const router = useRouter();
   const [checkedConditions, setCheckedConditions] = useState(['']);
 
@@ -57,11 +62,10 @@ export default function Home() {
 
     try {
       const response = await axios.post("http://localhost:8080/submit", data)
-      console.log(data);
 
       // Data received from the Spring API
       // If not implemented we can use some default values.
-      setPoints(response.data.geojson || data.geojson);
+      setPoints(response.data.geojson);
       router.push("/map");
     } catch (error) {
       console.error("Error submitting data:", error)

@@ -27,9 +27,11 @@ const Heatmap = ({ geojson, radius, opacity }: HeatmapProps) => {
 
   const filteredFeatures = useMemo(() => {
     if (filterSet.size === 0) return geojson.features;
-
+  
     return geojson.features.filter((point: any) => {
-      return point.risk_factors && point.risk_factors.some((rf: string) => filterSet.has(rf));
+      // Try to get risk factors either directly on the feature or in its properties
+      const risks = point.risk_factors || (point.properties && point.properties.risk_factor);
+      return risks && risks.some((rf: string) => filterSet.has(rf));
     });
   }, [geojson.features, filterSet]);
 

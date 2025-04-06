@@ -33,7 +33,7 @@ const PageContent: FC = () => {
       <MapControl position={ControlPosition.TOP_LEFT}>
         <FilterAutocomplete />
       </MapControl>
-      <Heatmap geojson={unpopulatedGeojson} radius={30} opacity={0.5} />
+      <Heatmap geojson={points} radius={30} opacity={0.5} />
       <InfoToolbar />
     </div>
   );
