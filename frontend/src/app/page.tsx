@@ -6,6 +6,7 @@ import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
 import { unpopulatedGeojson } from './map/data';
 import { useRouter } from "next/navigation";
+import LocationAutocomplete from '@/components/LocationAutocomplete';
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
@@ -52,7 +53,7 @@ export default function Home() {
 
   return (
     <div className='w-screen h-screen flex justify-center items-center'>
-      <form onSubmit={handleSubmit} className='flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg'>
+      <form onSubmit={handleSubmit} className='fade-in flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg' id='patient-form'>
         <h1 className='text-2xl font-bold'>Patient Information</h1>
 
         <TextField 
