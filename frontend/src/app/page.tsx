@@ -1,6 +1,6 @@
 "use client";
 
-import { Autocomplete, Box, Button, CircularProgress, FormLabel, TextField } from '@mui/material';
+import { Autocomplete, Box, Button, CircularProgress, FormLabel, Snackbar, TextField } from '@mui/material';
 import { useState } from "react";
 import axios from 'axios';
 import { useHeatMap } from '@/components/HeatMapProvider';
@@ -9,9 +9,10 @@ import { useRouter } from "next/navigation";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-
-
 export default function Home() {
+
+  const [error, setError] = useState("");
+
   const [isLoading, setIsLoading] = useState(false);
   const { setPoints } = useHeatMap();
   const router = useRouter();
@@ -33,10 +34,26 @@ export default function Home() {
       firstName: formData.get('firstName'),
       lastName: formData.get('lastName'),
       birthDate: formData.get('birthDate'),
-      address: formData.get('address'),
+      // address: formData.get('address'),
       conditions: checkedConditions,
       geojson: unpopulatedGeojson
+    }    
+
+    if (data.firstName === "" || data.lastName === "" || data.birthDate === "") {
+      setError("Please fill in all fields.");
+      setIsLoading(false);
+      return;
     }
+
+
+    const birthDate = new Date(data.birthDate as string);
+
+    if (birthDate > new Date() || birthDate < new Date("1900-01-01")) {
+      setError("Invalid birth date.");
+      setIsLoading(false);
+      return;
+    }
+
 
     try {
       const response = await axios.post("http://localhost:8080/submit", data)
@@ -49,6 +66,9 @@ export default function Home() {
     } catch (error) {
       console.error("Error submitting data:", error)
       // Optionally show a user-friendly error message here
+
+      setError("Error submitting data. Please try again.");
+
     } finally {
       setIsLoading(false)
     }
@@ -58,6 +78,15 @@ export default function Home() {
     <div className='w-screen h-screen flex justify-center items-center'>
       <form onSubmit={handleSubmit} className='fade-in flex flex-col gap-6 rounded-xl p-6 shadow-lg bg-white h-fit w-lg' id='patient-form'>
         <h1 className='text-2xl font-bold'>Patient Information</h1>
+
+        <Snackbar
+          anchorOrigin={ { vertical: 'bottom', horizontal: 'center' } }
+          open={ error !== ""}
+          autoHideDuration={3000}
+          onClose={ () => setError("") }
+          message={error}
+          action={ <Button onClick={ () => setError("") } color="inherit">Close</Button> }
+        />
 
         <TextField 
           name='firstName' 
@@ -74,10 +103,11 @@ export default function Home() {
           type="date"
         />
 
-        <TextField
+        {/* Remove Address in favor of map search if time permits */}
+        {/* <TextField
           name='address'
           label="Address"
-        />
+        /> */}
 
         {/*
          * Replaced in the future with Autocomplete. Ensure data formatted correctly here.
