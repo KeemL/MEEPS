@@ -22,7 +22,7 @@ export default function Home() {
     // Make sure the new autocomplete component properly populates conditions.
     // data should contain the geojson with the field "risk_factor"
     // For each feature, the backend assigns a list to risk_factor which takes one or more of the following values:
-    // Pollen, Air Pollution, UV Index
+    // Pollen, Air Pollution, UV Index, Heat
     // 
     // If we have extra time: Add a weight field based on indices provided by 3rd party api.
     const data = {
