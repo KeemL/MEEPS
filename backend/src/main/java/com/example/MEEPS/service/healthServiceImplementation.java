@@ -89,6 +89,41 @@ public class healthServiceImplementation implements HealthService {
         }
     }
 
+    public String[] getInfo(String[] conditions, String[] environmentalRisks){
+        String[] emptyArray = new String[0];
+        try{
+            String[] informationArray = new String[conditions.length];
+            for (int x = 0; x < conditions.length; x++) {
+                String promptTemplate = String.format(
+                        "I have %s. how is %s Environmental risk factors related to %s? answer in 3 short sentences.",
+                        conditions[x], environmentalRisks[x], conditions[x]);
+                
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+                headers.set("Authorization", "Bearer " + apiKey);
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("input", promptTemplate);
+            requestBody.put("model", "gpt-4o");
+            requestBody.put("temperature", 0.5);
+            requestBody.put("instructions", promptTemplate);
+            
+            HttpEntity<Map<String, Object>> requestEntity = new HttpEntity<>(requestBody, headers);
+
+            String url = "https://api.openai.com/v1/chat/completions";
+            ResponseEntity<String> response = restTemplate.postForEntity(url, requestEntity, String.class);
+        
+            informationArray[x] = response.getBody();
+            }
+           
+            return informationArray;
+        }
+        catch (Exception e){
+            return emptyArray;
+        }
+
+    }
+
     @Override
     public int checkAQI(double latitude, double longitude) {
         try {
