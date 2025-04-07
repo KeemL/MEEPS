@@ -10,4 +10,5 @@ public interface HealthService {
     public double checkUVIndex(double latitude, double longitude);
     public double checkTemperature(double latitude, double longitude);
     public JsonNode processPatient(Patient patient);
+    public String[] getInfo(String[] conditions, String[] environmentalRisks);
 }
