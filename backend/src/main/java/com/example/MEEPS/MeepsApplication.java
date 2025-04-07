@@ -22,7 +22,18 @@ public class MeepsApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-//			String response = healthService.determineRiskFactors("[Pollen allergy, Cardiovascular Disease]");
-//			System.out.println("ChatGPT response: " + response);
+            String response = healthService.determineRiskFactors("[Pollen allergy, Cardiovascular Disease]");
+    		System.out.println("ChatGPT response: " + response);
+    
+            String[] con = {"pollen alergies", "Old"};
+            String[] evRisk = {"pollen", "UV light"};
+    
+    
+            String[] responses = healthService.getInfo(con, evRisk);
+    
+    
+            for (String bae : responses){
+                System.out.println(bae);
+            }
     }
 }
